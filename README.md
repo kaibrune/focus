@@ -1,11 +1,27 @@
-# LeechBlock NG for Chrome
+<img src="/demo/demo_focus.jpg" width="100%" alt="smilify"/>
 
-[![Awesome Humane Tech](https://raw.githubusercontent.com/humanetech-community/awesome-humane-tech/main/humane-tech-badge.svg?sanitize=true)](https://github.com/humanetech-community/awesome-humane-tech)
+# focus - browser-based distraction blocker
 
-LeechBlock NG (Next Generation) is a simple productivity tool designed to block those time-wasting sites that can suck the life out of your working day. All you need to do is specify which sites to block and when to block them.
+focus is a forked version of LeechBlock – a productivity tool designed to block those time-wasting sites that can suck the life out of your working day.
 
-**Author:** James Anderson
+## 🔥 Additions to LeechBlock included in focus
 
-**Contributors:** Dario Kolac (graphics) & Robert Gützkow (graphics)
+- [x] modern and minimal look and feel
+- [x] removed sync features
+- [x] reduced code to be lightweight and fast
 
-Note that the latest version of [jQuery UI](https://jqueryui.com/) should be installed in the subfolder `jquery-ui`.
+## 📥 Download 
+
+Download the current release [here](https://github.com/kaibrune/focus/releases/tag/stable). Unpack the .zip and proceed with the installations steps below.
+
+## 🧑‍💻 Installation
+
+To install this chromium extension go to "Window" ➜ "Extension" ➜ toggle "Developer mode" in the right corner ➜ drag and drop the unpacked "focus" folder into the window or choose "Load unpacked" and navigate to the "focus" folder ➜ done!
+
+## 🤝 Compatibility & Source
+
+This extension works in every Chromium-based browser (Chrome/Brave/Edge/Opera/Vivaldi). "focus" is a fork from [Leechblock](https://github.com/proginosko/LeechBlockNG-chrome) and was slightly modified. All credits belong to @proginosko.
+
+## 💌 Feedback
+
+You got any questions or improvements? Feel free to submit a pull-request. Cheers! 
