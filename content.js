@@ -28,7 +28,7 @@ function updateTimer(text, size, location) {
 		if (!gTimer) {
 			// Create timer
 			gTimer = document.createElement("div");
-			gTimer.setAttribute("class", "leechblock-timer");
+			gTimer.setAttribute("class", "Focus-timer");
 			gTimer.addEventListener("dblclick", function (e) { this.style.display = "none"; });
 		}
 
@@ -66,18 +66,18 @@ function showAlert(text) {
 	if (!gAlert) {
 		// Create container
 		gAlert = document.createElement("div");
-		gAlert.setAttribute("class", "leechblock-alert-container");
+		gAlert.setAttribute("class", "Focus-alert-container");
 		document.body.appendChild(gAlert);
 
 		// Create message box
 		alertBox = document.createElement("div");
-		alertBox.setAttribute("class", "leechblock-alert-box");
+		alertBox.setAttribute("class", "Focus-alert-box");
 		alertBox.addEventListener("click", hideAlert);
 		alertIcon = document.createElement("div");
-		alertIcon.setAttribute("class", "leechblock-alert-icon");
+		alertIcon.setAttribute("class", "Focus-alert-icon");
 		alertBox.appendChild(alertIcon);
 		alertText = document.createElement("div");
-		alertText.setAttribute("class", "leechblock-alert-text");
+		alertText.setAttribute("class", "Focus-alert-text");
 		alertBox.appendChild(alertText);
 		gAlert.appendChild(alertBox);
 	}
@@ -128,11 +128,6 @@ function applyFilter(name) {
 		"blur (1px)": "blur(1px)",
 		"blur (2px)": "blur(2px)",
 		"blur (4px)": "blur(4px)",
-		"blur (8px)": "blur(8px)",
-		"blur (16px)": "blur(16px)",
-		"blur (32px)": "blur(32px)",
-		"fade (80%)": "opacity(20%)",
-		"fade (90%)": "opacity(10%)",
 		"grayscale": "grayscale(100%)",
 		"invert": "invert(100%)",
 		"sepia": "sepia(100%)"

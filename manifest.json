@@ -1,69 +1,38 @@
 {
-
-	"author": "James Anderson",
-
-	"background": {
-		"scripts": ["common.js", "background.js"]
-	},
-
-	"browser_action": {
-		"browser_style": false,
-		"default_icon": {
-			"16": "icons/leechblock16.png",
-			"32": "icons/leechblock32.png"
-		},
-		"default_popup": "popup.html",
-		"default_title": "LeechBlock"
-	},
-
-	"content_scripts": [
-		{
-			"matches": ["<all_urls>"],
-			"css": ["content.css"],
-			"js": ["content.js"],
-			"run_at": "document_start"
-		}
-	],
-
-	"default_locale": "en",
-
-	"description": "__MSG_extensionDescription__",
-
-	"homepage_url": "https://www.proginosko.com/leechblock/",
-
-	"icons": {
-		"16": "icons/leechblock16.png",
-		"32": "icons/leechblock32.png",
-		"48": "icons/leechblock48.png",
-		"64": "icons/leechblock64.png",
-		"96": "icons/leechblock96.png",
-		"128": "icons/leechblock128.png"
-	},
-
-	"incognito": "split",
-
-	"manifest_version": 2,
-
-	"name": "__MSG_extensionName__",
-
-	"optional_permissions": [
-		"<all_urls>"
-	],
-
-	"options_ui": {
-		"page": "options.html",
-		"open_in_tab": true
-	},
-
-	"permissions": [
-		"downloads",
-		"contextMenus",
-		"storage",
-		"tabs",
-		"unlimitedStorage",
-		"webNavigation"
-	],
-
-	"version": "1.3.1"
-
+   "author": "James Anderson",
+   "background": {
+      "scripts": [ "common.js", "background.js" ]
+   },
+   "browser_action": {
+      "browser_style": false,
+      "default_icon": {
+         "16": "icons/focus96.png",
+         "32": "icons/focus96.png"
+      },
+      "default_title": "Focus."
+   },
+   "content_scripts": [ {
+      "css": [ "content.css" ],
+      "js": [ "content.js" ],
+      "matches": [ "<all_urls>" ],
+      "run_at": "document_start"
+   } ],
+   "description": "Focus is a simple productivity tool designed to block those time-wasting sites that can suck the life out of your working day.",
+   "icons": {
+      "128": "icons/focus96.png",
+      "16": "icons/focus96.png",
+      "32": "icons/focus96.png",
+      "48": "icons/focus96.png",
+      "64": "icons/focus96.png",
+      "96": "icons/focus96.png"
+   },
+   "manifest_version": 2,
+   "name": "Focus.",
+   "optional_permissions": [ "\u003Call_urls>" ],
+   "options_ui": {
+      "open_in_tab": true,
+      "page": "options.html"
+   },
+   "permissions": ["contextMenus", "storage", "tabs", "webNavigation" ],
+   "version": "1.0.11.2"
 }

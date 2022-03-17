@@ -9,14 +9,6 @@ const browser = chrome;
 function processBlockInfo(info) {
 	if (!info) return;
 
-	if (info.theme) {
-		// Set theme
-		let link = document.getElementById("themeLink");
-		if (link) {
-			link.href = info.theme ? `/themes/${info.theme}.css` : "";
-		}
-	}
-
 	let blockedURL = document.getElementById("lbBlockedURL");
 	if (info.blockedURL && blockedURL) {
 		if (info.blockedURL.length > 60) {
@@ -64,8 +56,7 @@ function processBlockInfo(info) {
 		let countdown = {
 			blockedURL: info.blockedURL,
 			blockedSet: info.blockedSet,
-			delaySecs: info.delaySecs,
-			delayCancel: info.delayCancel
+			delaySecs: info.delaySecs
 		};
 		countdown.interval = window.setInterval(onCountdownTimer, 1000, countdown);
 	}
@@ -80,7 +71,7 @@ function processBlockInfo(info) {
 //
 function onCountdownTimer(countdown) {
 	// Cancel countdown if document not focused
-	if (countdown.delayCancel && !document.hasFocus()) {
+	if (!document.hasFocus()) {
 		// Clear countdown timer
 		window.clearInterval(countdown.interval);
 

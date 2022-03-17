@@ -89,28 +89,21 @@ function refreshMenus() {
 	// Options
 	browser.contextMenus.create({
 		id: "options",
-		title: browser.i18n.getMessage("optionsMenuItem"),
+		title: "Options",
 		contexts: [context]
 	});
 
 	// Lockdown
 	browser.contextMenus.create({
 		id: "lockdown",
-		title: browser.i18n.getMessage("lockdownMenuItem"),
-		contexts: [context]
-	});
-
-	// Override
-	browser.contextMenus.create({
-		id: "override",
-		title: browser.i18n.getMessage("overrideMenuItem"),
+		title: "Lockdown",
 		contexts: [context]
 	});
 
 	// Statistics
 	browser.contextMenus.create({
 		id: "stats",
-		title: browser.i18n.getMessage("statisticsMenuItem"),
+		title: "Statistics",
 		contexts: [context]
 	});
 
@@ -122,38 +115,20 @@ function refreshMenus() {
 	// Add Site
 	browser.contextMenus.create({
 		id: "addSite",
-		title: browser.i18n.getMessage("addSiteMenuItem"),
+		title: "Add Site",
 		contexts: [context]
 	});
 
 	// Add Site submenu
 	for (let set = 1; set <= gNumSets; set++) {
-		let title = browser.i18n.getMessage("addSiteToBlockSetMenuItem");
+		let title = `Add Site to Block Set ${set}`;
 		let setName = gOptions[`setName${set}`];
-		title += setName ? ` ${set} (${setName})` : ` ${set}`;
+		if (setName) {
+			title += ` (${setName})`;
+		}
 		browser.contextMenus.create({
 			id: `addSite-${set}`,
 			parentId: "addSite",
-			title: title,
-			contexts: [context]
-		});
-	}
-
-	// Add Page
-	browser.contextMenus.create({
-		id: "addPage",
-		title: browser.i18n.getMessage("addPageMenuItem"),
-		contexts: [context]
-	});
-
-	// Add Page submenu
-	for (let set = 1; set <= gNumSets; set++) {
-		let title = browser.i18n.getMessage("addPageToBlockSetMenuItem");
-		let setName = gOptions[`setName${set}`];
-		title += setName ? ` ${set} (${setName})` : ` ${set}`;
-		browser.contextMenus.create({
-			id: `addPage-${set}`,
-			parentId: "addPage",
 			title: title,
 			contexts: [context]
 		});
@@ -411,10 +386,6 @@ function checkTab(id, isBeforeNav, isRepeat) {
 		return false; // not blocked
 	}
 
-	// Quick exit for LeechBlock website (documentation should be always available)
-	if (url.startsWith(LEECHBLOCK_URL)) {
-		return false; // not blocked
-	}
 
 	// Quick exit for non-blockable URLs
 	if (!gTabs[id].blockable) {
@@ -449,8 +420,6 @@ function checkTab(id, isBeforeNav, isRepeat) {
 	let overrideEndTime = gOptions["oret"];
 
 	gTabs[id].secsLeft = Infinity;
-	gTabs[id].secsLeftSet = 0;
-	gTabs[id].showTimer = false;
 
 	for (let set = 1; set <= gNumSets; set++) {
 		if (allowHost && allowPath && allowSet == set) {
@@ -502,9 +471,8 @@ function checkTab(id, isBeforeNav, isRepeat) {
 			let days = gOptions[`days${set}`];
 			let blockURL = gOptions[`blockURL${set}`];
 			let applyFilter = gOptions[`applyFilter${set}`];
-			let filterName = gOptions[`filterName${set}`];
-			let filterMute = gOptions[`filterMute${set}`];
 			let closeTab = gOptions[`closeTab${set}`];
+			let filterName = gOptions[`filterName${set}`];
 			let activeBlock = gOptions[`activeBlock${set}`];
 			let allowOverride = gOptions[`allowOverride${set}`];
 			let showTimer = gOptions[`showTimer${set}`];
@@ -560,6 +528,8 @@ function checkTab(id, isBeforeNav, isRepeat) {
 
 			// Apply block if all relevant block conditions are fulfilled
 			if (!override && doBlock && (!isRepeat || activeBlock)) {
+				// Get final URL for block page
+				blockURL = blockURL.replace(/\$S/g, set).replace(/\$U/g, pageURLWithHash);
 
 				function applyBlock(keyword) {
 					if (closeTab) {
@@ -567,11 +537,6 @@ function checkTab(id, isBeforeNav, isRepeat) {
 						browser.tabs.remove(id);
 					} else if (applyFilter) {
 						gTabs[id].filterSet = set;
-
-						// Mute tab if option selected
-						if (filterMute) {
-							browser.tabs.update(id, { "muted": true });
-						}
 
 						// Send message to tab
 						let message = {
@@ -582,12 +547,6 @@ function checkTab(id, isBeforeNav, isRepeat) {
 					} else {
 						gTabs[id].keyword = keyword;
 						gTabs[id].url = blockURL; // prevent reload loop on Chrome
-
-						// Get final URL for block page
-						blockURL = getLocalizedURL(blockURL)
-								.replace(/\$K/g, keyword ? keyword : "")
-								.replace(/\$S/g, set)
-								.replace(/\$U/g, pageURLWithHash);
 
 						// Redirect page
 						browser.tabs.update(id, { url: blockURL });
@@ -618,11 +577,6 @@ function checkTab(id, isBeforeNav, isRepeat) {
 			if (set == gTabs[id].filterSet && (override || !doBlock)) {
 				gTabs[id].filterSet = undefined;
 
-				// Unmute tab if option selected
-				if (filterMute) {
-					browser.tabs.update(id, { "muted": false });
-				}
-
 				// Send message to tab
 				let message = {
 					type: "filter",
@@ -638,10 +592,9 @@ function checkTab(id, isBeforeNav, isRepeat) {
 			if (override) {
 				secsLeft = Math.max(secsLeft, overrideEndTime - now);
 			}
-			if (secsLeft < gTabs[id].secsLeft) {
+			if (showTimer && secsLeft < gTabs[id].secsLeft) {
 				gTabs[id].secsLeft = secsLeft;
 				gTabs[id].secsLeftSet = set;
-				gTabs[id].showTimer = showTimer;
 			}
 		}
 	}
@@ -655,10 +608,6 @@ function checkTab(id, isBeforeNav, isRepeat) {
 //
 function checkWarning(id) {
 	let set = gTabs[id].secsLeftSet;
-	if (set < 1 || set > gNumSets) {
-		return;
-	}
-
 	let warnSecs = gOptions["warnSecs"];
 	let canWarn = !gOptions["warnImmediate"] || gOptions[`activeBlock${set}`]
 
@@ -843,16 +792,14 @@ function updateTimer(id) {
 		return;
 	}
 
-	let secsLeft = gTabs[id].secsLeft;
-	let showTimer = gTabs[id].showTimer;
-
 	// Send message to tab
+	let secsLeft = gTabs[id].secsLeft;
 	let message = {
 		type: "timer",
 		size: gOptions["timerSize"],
 		location: gOptions["timerLocation"]
 	};
-	if (!gOptions["timerVisible"] || secsLeft == Infinity || !showTimer) {
+	if (!gOptions["timerVisible"] || secsLeft == undefined || secsLeft == Infinity) {
 		message.text = null; // hide timer
 	} else {
 		message.text = formatTime(secsLeft); // show timer with time left
@@ -861,16 +808,16 @@ function updateTimer(id) {
 
 	// Set tooltip
 	if (!gIsAndroid) {
-		if (secsLeft == Infinity) {
-			browser.browserAction.setTitle({ title: "LeechBlock", tabId: id });
+		if (secsLeft == undefined || secsLeft == Infinity) {
+			browser.browserAction.setTitle({ title: "Focus", tabId: id });
 		} else {
-			let title = "LeechBlock [" + formatTime(secsLeft) + "]"
+			let title = "Focus [" + formatTime(secsLeft) + "]"
 			browser.browserAction.setTitle({ title: title, tabId: id });
 		}
 	}
 
 	// Set badge timer (if option selected)
-	if (!gIsAndroid && gOptions["timerBadge"] && secsLeft < 600 && showTimer) {
+	if (!gIsAndroid && gOptions["timerBadge"] && secsLeft < 600) {
 		let m = Math.floor(secsLeft / 60);
 		let s = Math.floor(secsLeft) % 60;
 		let text = m + ":" + ((s < 10) ? "0" + s : s);
@@ -948,9 +895,8 @@ function createBlockInfo(id, url) {
 		}
 	}
 
-	// Get delaying info for block set
+	// Get delaying time for block set
 	let delaySecs = gOptions[`delaySecs${blockedSet}`];
-	let delayCancel = gOptions[`delayCancel${blockedSet}`];
 
 	// Get reloading time (if specified)
 	let reloadSecs = gOptions[`reloadSecs${blockedSet}`];
@@ -963,7 +909,6 @@ function createBlockInfo(id, url) {
 		keywordMatch: keywordMatch,
 		unblockTime: unblockTime,
 		delaySecs: delaySecs,
-		delayCancel: delayCancel,
 		reloadSecs: reloadSecs
 	};
 }
@@ -1143,36 +1088,10 @@ function cancelLockdown(set) {
 	saveTimeData();
 }
 
-// Apply override
-//
-function applyOverride(endTime) {
-	//log("applyOverride: " + endTime);
-
-	if (!gGotOptions) {
-		return;
-	}
-
-	if (endTime) {
-		// Update option
-		gOptions["oret"] = endTime;
-
-		// Save updated option to storage
-		let options = {};
-		options["oret"] = endTime;
-		gStorage.set(options, function () {
-			if (browser.runtime.lastError) {
-				warn("Cannot set options: " + browser.runtime.lastError.message);
-			}
-		});
-
-		updateIcon();
-	}
-}
-
 // Open extension page (either create new tab or activate existing tab)
 //
 function openExtensionPage(url) {
-	let fullURL = browser.runtime.getURL(url);
+	let fullURL = browser.extension.getURL(url);
 
 	browser.tabs.query({ url: fullURL }, onGot);
 
@@ -1208,8 +1127,8 @@ function openDelayedPage(id, url, set) {
 
 // Add site to block set
 //
-function addSiteToSet(url, set, includePath) {
-	//log("addSiteToSet: " + url + " " + set + " " + includePath);
+function addSiteToSet(url, set) {
+	//log("addSiteToSet: " + url + " " + set);
 
 	if (!url) {
 		browser.tabs.query(
@@ -1235,9 +1154,6 @@ function addSiteToSet(url, set, includePath) {
 
 	// Add site if not already included
 	let site = parsedURL.host.replace(/^www\./, "");
-	if (includePath) {
-		site += parsedURL.path; // include full path to page
-	}
 	let patterns = sites.split(/\s+/);
 	if (patterns.indexOf(site) < 0) {
 		// Get sorted list of sites including new one
@@ -1256,7 +1172,7 @@ function addSiteToSet(url, set, includePath) {
 
 		createRegExps();
 
-		// Save updated options to storage
+		// Save updated options to local storage
 		let options = {};
 		options[`sites${set}`] = sites;
 		options[`blockRE${set}`] = regexps.block;
@@ -1279,14 +1195,10 @@ function handleMenuClick(info, tab) {
 		browser.runtime.openOptionsPage();
 	} else if (id == "lockdown") {
 		openExtensionPage("lockdown.html");
-	} else if (id == "override") {
-		openExtensionPage("override.html");
 	} else if (id == "stats") {
 		openExtensionPage("stats.html");
 	} else if (id.startsWith("addSite-")) {
-		addSiteToSet(info.pageUrl, id.substr(8), false);
-	} else if (id.startsWith("addPage-")) {
-		addSiteToSet(info.pageUrl, id.substr(8), true);
+		addSiteToSet(info.pageUrl, id.substr(8));
 	}
 }
 
@@ -1329,11 +1241,6 @@ function handleMessage(message, sender, sendResponse) {
 		case "options":
 			// Options updated
 			retrieveOptions(true);
-			break;
-
-		case "override":
-			// Override requested
-			applyOverride(message.endTime);
 			break;
 
 		case "referrer":
@@ -1469,9 +1376,6 @@ function onInterval() {
 browser.runtime.getPlatformInfo(
 	function (info) { gIsAndroid = (info.os == "android"); }
 );
-
-let localePath = browser.i18n.getMessage("localePath");
-browser.browserAction.setPopup({ popup: localePath + "popup.html" });
 
 if (browser.contextMenus) {
 	browser.contextMenus.onClicked.addListener(handleMenuClick);

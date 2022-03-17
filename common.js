@@ -6,16 +6,10 @@ const MAX_SETS = 30;
 const ALL_DAY_TIMES = "0000-2400";
 const DEFAULT_BLOCK_URL = "blocked.html?$S&$U";
 const DELAYED_BLOCK_URL = "delayed.html?$S&$U";
-const DEFAULT_ICON = { 16: "icons/leechblock16.png", 32: "icons/leechblock32.png" };
-const OVERRIDE_ICON = { 16: "icons/leechblock16o.png", 32: "icons/leechblock32o.png" };
+const DEFAULT_ICON = { 16: "icons/Focus16.png", 32: "icons/Focus32.png" };
+const OVERRIDE_ICON = { 16: "icons/Focus16o.png", 32: "icons/Focus32o.png" };
 
 const PARSE_URL = /^((([\w-]+):\/*(\w+(?::\w+)?@)?([\w-\.]+)(?::(\d*))?)([^\?#]*))(\?[^#]*)?(#.*)?$/;
-
-const ABSOLUTE_URL = /^[\w-]+:/;
-
-const INTERNAL_BLOCK_URL = /^(\w+\/)?(blocked|delayed)\.html\?\$S&\$U$/;
-
-const LEECHBLOCK_URL = "https://www.proginosko.com/leechblock/";
 
 const U_WORD_CHAR = "[\\p{L}\\p{N}]";
 const U_WORD_CHARS0 = `${U_WORD_CHAR}*`;
@@ -28,7 +22,7 @@ const PER_SET_OPTIONS = {
 	// def: default value, id: form element identifier (see options.html)
 	setName: { type: "string", def: "", id: "setName" },
 	sites: { type: "string", def: "", id: "sites" },
-	times: { type: "string", def: "", id: "times" },
+	times: { type: "string", def: "0900-1700", id: "times" },
 	limitMins: { type: "string", def: "", id: "limitMins" },
 	limitPeriod: { type: "string", def: "", id: "limitPeriod" },
 	limitOffset: { type: "string", def: "", id: "limitOffset" },
@@ -36,15 +30,13 @@ const PER_SET_OPTIONS = {
 	days: { type: "array", def: [false, true, true, true, true, true, false], id: "day" },
 	blockURL: { type: "string", def: DEFAULT_BLOCK_URL, id: "blockURL" },
 	applyFilter: { type: "boolean", def: false, id: "applyFilter" },
-	filterName: { type: "string", def: "grayscale", id: "filterName" },
-	filterMute: { type: "boolean", def: false, id: "filterMute" },
 	closeTab: { type: "boolean", def: false, id: "closeTab" },
+	filterName: { type: "string", def: "grayscale", id: "filterName" },
 	activeBlock: { type: "boolean", def: false, id: "activeBlock" },
 	countFocus: { type: "boolean", def: true, id: "countFocus" },
 	showKeyword: { type: "boolean", def: true, id: "showKeyword" },
 	delayFirst: { type: "boolean", def: true, id: "delayFirst" },
 	delaySecs: { type: "string", def: "60", id: "delaySecs" },
-	delayCancel: { type: "boolean", def: true, id: "delayCancel" },
 	reloadSecs: { type: "string", def: "", id: "reloadSecs" },
 	allowOverride: { type: "boolean", def: false, id: "allowOverride" },
 	prevOpts: { type: "boolean", def: false, id: "prevOpts" },
@@ -198,8 +190,7 @@ function getParsedURL(url) {
 // Clean list of sites
 //
 function cleanSites(sites) {
-	sites = sites.replace(/\s+/g, " ").replace(/(^ +)|( +$)/g, ""); // remove extra whitespace
-	sites = sites.replace(/^\w+:\/+/, "").replace(/ \w+:\/+/g, " "); // remove protocols
+	sites = sites.replace(/\s+/g, " ").replace(/(^ +)|( +$)|(\w+:\/+)/g, "");
 	sites = sites.split(" ").sort().join(" "); // sort alphabetically
 	return sites;
 }
@@ -299,12 +290,6 @@ function checkPosIntFormat(value) {
 //
 function checkPosNegIntFormat(value) {
 	return (value == "") || /^-?[1-9][0-9]*$/.test(value);
-}
-
-// Check blocking page URL format
-//
-function checkBlockURLFormat(url) {
-	return INTERNAL_BLOCK_URL.test(url) || getParsedURL(url).page;
 }
 
 // Convert times to minute periods
@@ -479,14 +464,6 @@ function createAccessCode(len) {
 function setTheme(theme) {
 	let link = document.getElementById("themeLink");
 	if (link) {
-		link.href = theme ? `/themes/${theme}.css` : "";
+		link.href = theme ? `themes/${theme}.css` : "";
 	}
-}
-
-// Get localized version of extension page
-//
-function getLocalizedURL(url) {
-	return (ABSOLUTE_URL.test(url))
-			? url // no localization for absolute URL
-			: browser.i18n.getMessage("localePath") + url;
 }
