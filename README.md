@@ -1,6 +1,6 @@
 <img src="/demo/demo_focus.jpg" width="100%" alt="smilify"/>
 
-# focus - browser-based distraction blocker
+# focus - extension-based distraction blocker
 
 focus is a forked version of LeechBlock – a productivity tool designed to block those time-wasting sites that can suck the life out of your working day.
 
@@ -20,7 +20,7 @@ To install this chromium extension go to "Window" ➜ "Extension" ➜ toggle "De
 
 ## 🤝 Compatibility & Source
 
-This extension works in every Chromium-based browser (Chrome/Brave/Edge/Opera/Vivaldi). "focus" is a fork from [Leechblock](https://github.com/proginosko/LeechBlockNG-chrome) and was slightly modified. All credits belong to @proginosko.
+This extension works in every Chromium-based browser (Chrome/Brave/Edge/Opera/Vivaldi). "focus" is a fork from [Leechblock](https://github.com/proginosko/LeechBlockNG-chrome) and was slightly modified. All credits belong to [@proginosko](https://github.com/proginosko).
 
 ## 💌 Feedback
 
