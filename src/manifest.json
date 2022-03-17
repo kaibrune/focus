@@ -27,7 +27,8 @@
       "96": "icons/focus96.png"
    },
    "manifest_version": 2,
-   "name": "Focus.",
+   "name": "focus",
+   "default_locale": "en",
    "optional_permissions": [ "\u003Call_urls>" ],
    "options_ui": {
       "open_in_tab": true,
