@@ -2,7 +2,7 @@
 
 # focus - extension-based distraction blocker
 
-focus is a forked version of LeechBlock – a productivity tool designed to block those time-wasting sites that can suck the life out of your working day.
+focus is a forked version of [Leechblock](https://github.com/proginosko/LeechBlockNG-chrome) – a productivity tool designed to block those time-wasting sites that can suck the life out of your working day. More information on the features [here](https://www.proginosko.com/leechblock/).
 
 ## 🔥 Additions to LeechBlock included in focus
 
